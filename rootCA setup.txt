@@ -1,0 +1,21 @@
+mkdir ca
+cd ca
+mkdir -p certs crl newcerts private subca/csr subca/certs/
+ls -l
+touch index.txt
+touch index.txt.attr
+echo 1000 > serial
+echo 1000 > crlnumber
+#paste  rootca.conf file
+nano rootca.conf
+openssl genrsa -aes256 -out private/ca.key.pem 4096
+#type pass enter
+#type pass enter
+chmod 400 private/ca.key.pem
+openssl req -config rootca.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
+#county - IN
+#after paste file
+openssl ca -config rootca.cnf -extensions v3_intermediate_ca -days 3650 -notext -md sha256 -in subca/csr/subca.csr.pem -out subca/certs/subca.cert.pem
+#paste key insubCA
+scp subca/certs/subca.cert.pem shuhari@subca:/home/shuhari/subca/certs
+ 

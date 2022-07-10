@@ -1,0 +1,21 @@
+mkdir subca
+cd subca
+mkdir certs crl csr netcerts private
+chmod 700 private/
+touch index.txt
+touch index.txt.attr
+echo 1000 > serial
+echo 1000 > crlnumber
+# paste subca.cnf file
+
+openssl genrsa -aes256 -out private/subca.key.pem 4096 
+# give password 
+chmod 400 private/subca.key.pem
+openssl req -config subca.cnf -new -sha256 -key private/subca.key.pem
+#enter pass
+#paste the file
+scp csr/subca.csr.pem shuhari@rootCA:/home/shuhari/ca/subca/csr
+openssl ca -config subca.cnf -extensions server_cert -days 375 -notext -md sha256 -in csr/www.shuharilabs.local.csr.pem -out certs/www.shuharilabs.local.cert.pem
+cd certs 
+cat ww.shuharilabs.local.cert.pem subca.cert.pem > bundle.pem
+scp bundle.pem shuhari@www:/home/shuhari/certs/

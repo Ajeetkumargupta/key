@@ -1,0 +1,22 @@
+#set dns
+mkdir certs
+cd certs/
+#paste subca.cnf
+openssl genrsa -out www.shuharilabs.local.key,pem
+
+openssl req -config subca.cnf -key www.shuharilabs.local.key.pem -new -sha256 -out www.shuharilabs.local.csr.pem
+# country -IN
+scp www.shuharilabs.local.csr.pem shuhari@subca:/home/shuhari/subca/csr/
+cd
+cd certs
+mkdir -p /etc/apache2/ssl
+sudo cp bundle.pem /etc/apache2/ssl/
+sudo cp www.shuharilabs.local.key.pem /etc/apache2/ssl/
+chmod 600 /etc/apache2/ssl/*
+nano /etc/apache2/sites-available/default-ssl.conf
+#add in line 3
+ServerName www.shuharilabs.local:443
+# set path 
+/etc/apache2/ssl/bundle.pem
+/etc/apache2/ssl/www.shuharilabs.local.key.pem
+systemctl restart apache2.service
