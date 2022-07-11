@@ -1,0 +1,24 @@
+#create a image using cmd
+dd if=<file_name> |pv| dd of=<ouput_file_name>
+
+#zeronization commond
+dd if=/dev/zero of=<pendrive_location>
+
+#check zoronization are done
+xxd -a <pd_location>
+
+#data recovery using foremost in kali
+foremost -i <image_path> -t jpeg,img,pdf
+
+#Image analysis using bulk_extrector in kali
+bulk_extrector -o <output_file_path> <image_file_location>
+
+# find hexvalue of any file
+Hexdump <file_name>
+
+#data hiding in image in windows
+copy /b abc.jpg+abc.txt
+
+#data hiding in image in kali
+apt-get install steghide
+steghide embed -cf abc.jpg -ef abc.txt
