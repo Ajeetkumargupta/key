@@ -1,0 +1,47 @@
+
+install telnet and wget
+hostname = mail.shuharilabs.local
+host =	mail.shuharilabs.local mail
+	ip of machine shuharilabs.local mail.shuharilabs.local
+nano /etc/host.conf
+order hosts,bind
+___________________________________________________________________
+install postfix
+cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
+nano /etc/postfix/main.cf
+	mynetworks = 127.0.0.0/8, 192.168.80.0/24
+	
+	home_mailbox = Maildir/
+	smtpd_sasl_type = dovecot
+	smtpd_sasl_path = private/auth
+	smtpd_sasl_auth_enable = yes
+	smtpd_sasl_security_options = noanonymous
+	smtpd_sasl_local_domain = $myhostname
+	smtpd_recipient_restrictions = permit_mynetworks,permit_auth_destination,permit_sasl_authenticated,reject
+sudo postconf -n // for check configuration
+install mailutils // for mail send check
+systemctl restart postfix
+____________________________________________________________________
+
+install dovecot-core dovecot-imapd
+cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.backup
+nano /etc/dovecot/dovecot.conf
+	listen = *, :: // uncommnet
+nano /etc/dovecot/conf.d/10-auth.conf
+	disable_plaintext_auth = no // uncomment
+	auth_mechanisms = plain login
+nano /etc/dovecot/conf.d/10-mail.conf
+	mail_location = maidir:~/Maildir
+nano /etc/dovecot/conf.d/10-master.conf
+#Postfix smtp-auth
+	uncoment this section add two lines
+	user = postfix
+	group = postfix
+systemctl restart dovecot.service
+____________________________________________________________________
+
+install dovecot-pop3d
+nano /etc/dovecot/conf.d/10-master.conf
+	port = 110 // uncooment
+systemctl restart dovecot.service
+
